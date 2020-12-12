@@ -202,4 +202,34 @@ public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
         }
         return stringBuilder.toString();
     }
+
+    /**
+     * Get Histogram Out Liner Values List
+     *
+     * @return Out Liner Values
+     */
+    @Override
+    public List<T> getOutLinerValueList() {
+        return outLinerValueList;
+    }
+
+    /**
+     * Get Histogram Mapped Values List
+     *
+     * @return Mapped Values List
+     */
+    @Override
+    public List<T> getMappedValueList() {
+        return mappedValueList;
+    }
+
+    /**
+     * Get Histogram Interval Set
+     *
+     * @return Interval Set
+     */
+    @Override
+    public Set<HistogramInterval<T>> getHistogramIntervalSet() {
+        return valueMap.keySet();
+    }
 }

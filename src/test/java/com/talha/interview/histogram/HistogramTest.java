@@ -6,6 +6,9 @@ import org.apache.log4j.BasicConfigurator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class HistogramTest {
@@ -78,5 +81,40 @@ class HistogramTest {
         histogram.addValue(7d);
 
         assertEquals("outliners: 6.0, 7.0", histogram.toStringOutLiners());
+    }
+
+    @Test
+    void getOutLinerValueList() {
+        Histogram<Double> histogram = initHistogram();
+        histogram.addValue(6d);
+        histogram.addValue(7d);
+
+        assertEquals(2, histogram.getOutLinerValueList().size());
+        List<Double> listResult = new ArrayList<>();
+        listResult.add(6d);
+        listResult.add(7d);
+        assertTrue(histogram.getOutLinerValueList().containsAll(listResult));
+    }
+
+    @Test
+    void getMappedValueList() {
+        Histogram<Double> histogram = initHistogram();
+
+        assertEquals(5, histogram.getMappedValueList().size());
+        List<Double> listResult = new ArrayList<>();
+        listResult.add(1d);
+        listResult.add(2d);
+        listResult.add(3d);
+        listResult.add(4d);
+        listResult.add(5d);
+        assertTrue(histogram.getMappedValueList().containsAll(listResult));
+    }
+
+    @Test
+    void getHistogramIntervalSet() {
+        Histogram<Double> histogram = initHistogram();
+
+        assertEquals(1, histogram.getHistogramIntervalSet().size());
+        assertEquals(HistogramInterval.of(true, true, 0d, 5d), histogram.getHistogramIntervalSet().iterator().next());
     }
 }

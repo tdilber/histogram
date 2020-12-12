@@ -117,4 +117,24 @@ class HistogramIntervalTest {
         HistogramInterval<Double> interval = HistogramInterval.of(true, false, 5d, 10d);
         assertEquals("[5.0 , 10.0)", interval.toString());
     }
+
+    @Test
+    void testEquals() {
+        HistogramInterval<Double> baseHI = HistogramInterval.of(true, false, 5d, 10d);
+        HistogramInterval<Double> hi2 = HistogramInterval.of(true, false, 5d, 10d);
+        assertEquals(hi2, baseHI);
+        assertEquals(baseHI, hi2);
+        HistogramInterval<Double> hi3 = HistogramInterval.of(false, false, 5d, 10d);
+        assertNotEquals(baseHI, hi3);
+        assertNotEquals(hi3, baseHI);
+        HistogramInterval<Double> hi4 = HistogramInterval.of(true, true, 5d, 10d);
+        assertNotEquals(baseHI, hi4);
+        assertNotEquals(hi4, baseHI);
+        HistogramInterval<Double> hi5 = HistogramInterval.of(true, false, 6d, 10d);
+        assertNotEquals(baseHI, hi5);
+        assertNotEquals(hi5, baseHI);
+        HistogramInterval<Double> hi6 = HistogramInterval.of(true, false, 5d, 7d);
+        assertNotEquals(baseHI, hi6);
+        assertNotEquals(hi6, baseHI);
+    }
 }

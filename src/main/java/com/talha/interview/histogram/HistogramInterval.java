@@ -133,4 +133,15 @@ public class HistogramInterval<T extends Comparable> {
             return this.rightContain && hi.leftContain;
         }
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (getClass().isAssignableFrom(obj.getClass())) {
+            HistogramInterval<T> interval = (HistogramInterval<T>) obj;
+            return this.leftContain == interval.leftContain && this.rightContain == interval.rightContain && this.leftValue.equals(interval.leftValue)
+                    && this.rightValue.equals(interval.rightValue);
+        } else {
+            return false;
+        }
+    }
 }
