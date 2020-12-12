@@ -22,7 +22,7 @@ public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
     private final TreeMap<T, HistogramInterval<T>> histogramIntervalTreeMap = new TreeMap<>();
     private final Map<HistogramInterval<T>, List<T>> valueMap = new HashMap<>();
     private final List<T> outLinerValueList = new ArrayList<>();
-    private final List<T> allValueList = new ArrayList<>();
+    private final List<T> mappedValueList = new ArrayList<>();
 
     /**
      * Empty Constructor
@@ -59,11 +59,11 @@ public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
     @Override
     public Double mean() {
         log.trace("mean method called");
-        if (allValueList.isEmpty()) {
+        if (mappedValueList.isEmpty()) {
             return 0d;
         }
         Double result = getTotalValue();
-        return result / allValueList.size();
+        return result / mappedValueList.size();
     }
 
     /**
@@ -73,24 +73,24 @@ public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
     @Override
     public Double variance() {
         log.trace("variance method called");
-        if (allValueList.isEmpty()) {
+        if (mappedValueList.isEmpty()) {
             return 0d;
         }
 
         Double mean = mean();
         double sumResult = 0d;
 
-        for (T value : allValueList) {
+        for (T value : mappedValueList) {
             sumResult += Math.pow((value.doubleValue() - mean), 2);
         }
-        sumResult /= allValueList.size() - 1;
+        sumResult /= mappedValueList.size() - 1;
 
-        return Math.sqrt(sumResult);
+        return sumResult;
     }
 
     private Double getTotalValue() {
         AtomicReference<Double> total = new AtomicReference<>(0d);
-        allValueList.parallelStream().forEach(value -> total.updateAndGet(v -> v + value.doubleValue()));
+        mappedValueList.parallelStream().forEach(value -> total.updateAndGet(v -> v + value.doubleValue()));
         return total.get();
     }
 
@@ -116,6 +116,7 @@ public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
 
         for (T savedOutLiner : valueMap.get(newInterval)) {
             outLinerValueList.remove(savedOutLiner);
+            mappedValueList.add(savedOutLiner);
             log.info(savedOutLiner + " value move to new added " + newInterval.toString() + " interval");
         }
     }
@@ -128,12 +129,12 @@ public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
     @Override
     public synchronized void addValue(T value) { //Synchronized for Thread Safety
         log.trace("addValue method called");
-        allValueList.add(value);
 
         T lower = histogramIntervalTreeMap.navigableKeySet().lower(value);
         HistogramInterval<T> interval = histogramIntervalTreeMap.get(lower);
         if (interval.isAvailableValue(value)) {
             valueMap.get(interval).add(value);
+            mappedValueList.add(value);
             log.info(value + " value added in " + interval.toString() + " interval");
         } else {
             log.info(value + " value added in out liners list");
