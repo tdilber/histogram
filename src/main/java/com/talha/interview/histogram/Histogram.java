@@ -1,43 +1,106 @@
 package com.talha.interview.histogram;
 
 import com.talha.interview.histogram.exception.IntersectValueInHistogramIntervalsException;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by tdilber at 12-Dec-20
+ * <p>
+ * Histogram Class
  */
-@Component
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
+    private final static Logger log = LoggerFactory.getLogger(Histogram.class);
 
     /**
      * T => leftValue
      * HistogramInterval<T> => Interval.
      */
-    private TreeMap<T, HistogramInterval<T>> histogramIntervalTreeMap = new TreeMap<>();
-    private Map<HistogramInterval<T>, List<T>> valueMap = new HashMap<>();
-    private List<T> outLinerValueList = new ArrayList<>();
-    private List<T> allValueList = new ArrayList<>();
+    private final TreeMap<T, HistogramInterval<T>> histogramIntervalTreeMap = new TreeMap<>();
+    private final Map<HistogramInterval<T>, List<T>> valueMap = new HashMap<>();
+    private final List<T> outLinerValueList = new ArrayList<>();
+    private final List<T> allValueList = new ArrayList<>();
 
-    @Override
-    public T mean() {
-        return null;
-    }
-
-    @Override
-    public T variance() {
-        return null;
+    /**
+     * Empty Constructor
+     */
+    public Histogram() {
+        log.trace("Constructor Begin");
+        log.trace("Constructor End");
     }
 
     /**
-     * Synchronized for Thread Safety
+     * Array Interval Constructor
+     * @param histogramIntervals Array Intervals
+     */
+    public Histogram(HistogramInterval<T>... histogramIntervals) {
+        this(Arrays.asList(histogramIntervals));
+    }
+
+    /**
+     * List Interval Constructor
+     * @param histogramIntervals List Intervals
+     */
+    public Histogram(Collection<HistogramInterval<T>> histogramIntervals) {
+        log.trace("Constructor Begin");
+        for (HistogramInterval<T> histogramInterval : histogramIntervals) {
+            addInterval(histogramInterval);
+        }
+        log.trace("Constructor End");
+    }
+
+    /**
+     * Get mean current histogram
+     * @return mean
      */
     @Override
-    public synchronized void addInterval(HistogramInterval<T> newInterval) {
+    public Double mean() {
+        log.trace("mean method called");
+        if (allValueList.isEmpty()) {
+            return 0d;
+        }
+        Double result = getTotalValue();
+        return result / allValueList.size();
+    }
+
+    /**
+     * Get variance current histogram
+     * @return variance
+     */
+    @Override
+    public Double variance() {
+        log.trace("variance method called");
+        if (allValueList.isEmpty()) {
+            return 0d;
+        }
+
+        Double mean = mean();
+        double sumResult = 0d;
+
+        for (T value : allValueList) {
+            sumResult += Math.pow((value.doubleValue() - mean), 2);
+        }
+        sumResult /= allValueList.size() - 1;
+
+        return Math.sqrt(sumResult);
+    }
+
+    private Double getTotalValue() {
+        AtomicReference<Double> total = new AtomicReference<>(0d);
+        allValueList.parallelStream().forEach(value -> total.updateAndGet(v -> v + value.doubleValue()));
+        return total.get();
+    }
+
+    /**
+     * Add new interval in Histogram
+     * @param newInterval interval to add
+     */
+    @Override
+    public synchronized void addInterval(HistogramInterval<T> newInterval) { //Synchronized for Thread Safety
+        log.trace("addInterval method called");
         checkIntersect(newInterval);
         histogramIntervalTreeMap.put(newInterval.getLeftValue(), newInterval);
         valueMap.put(newInterval, new ArrayList<>());
@@ -53,18 +116,27 @@ public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
 
         for (T savedOutLiner : valueMap.get(newInterval)) {
             outLinerValueList.remove(savedOutLiner);
+            log.info(savedOutLiner + " value move to new added " + newInterval.toString() + " interval");
         }
     }
 
+    /**
+     * Add new value in Histogram
+     *
+     * @param value value to add
+     */
     @Override
-    public void addValue(T value) {
+    public synchronized void addValue(T value) { //Synchronized for Thread Safety
+        log.trace("addValue method called");
         allValueList.add(value);
 
         T lower = histogramIntervalTreeMap.navigableKeySet().lower(value);
         HistogramInterval<T> interval = histogramIntervalTreeMap.get(lower);
         if (interval.isAvailableValue(value)) {
             valueMap.get(interval).add(value);
+            log.info(value + " value added in " + interval.toString() + " interval");
         } else {
+            log.info(value + " value added in out liners list");
             outLinerValueList.add(value);
         }
     }
@@ -78,7 +150,42 @@ public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
 
     private void checkKeyForIntersect(HistogramInterval<T> histogramInterval, T key) {
         if (key != null && histogramIntervalTreeMap.get(key).isIntersect(histogramInterval)) {
-            throw new IntersectValueInHistogramIntervalsException(histogramInterval.toString() + " intersect with existing " + histogramIntervalTreeMap.get(key).toString() + " interval!");
+            String message = histogramInterval.toString() + " intersect with existing " + histogramIntervalTreeMap.get(key).toString() + " interval!";
+            log.error(message);
+            throw new IntersectValueInHistogramIntervalsException(message);
         }
+    }
+
+    /**
+     * Generation String for Print Value Map
+     *
+     * @return generated result
+     */
+    public String toStringValueMap() {
+        log.trace("toStringValueMap method called");
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Map.Entry<HistogramInterval<T>, List<T>> entry : valueMap.entrySet()) {
+            stringBuilder.append(entry.getKey().toString()).append(": ").append(entry.getValue().size()).append("\n");
+        }
+
+        return stringBuilder.toString();
+    }
+
+    /**
+     * Generation String for Print Out Liners
+     *
+     * @return generated result
+     */
+    public String toStringOutLiners() {
+        log.trace("toStringOutLiners method called");
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("outliners: ");
+        for (int i = 0; i < outLinerValueList.size(); i++) {
+            stringBuilder.append(outLinerValueList.get(i));
+            if (outLinerValueList.size() - 1 != i) {
+                stringBuilder.append(", ");
+            }
+        }
+        return stringBuilder.toString();
     }
 }

@@ -8,7 +8,7 @@ public class IntersectValueInHistogramIntervalsException extends RuntimeExceptio
     private final String code;
 
     /**
-     * Constructs a DummyDataEntityNotFoundException.
+     * Constructs a IntersectValueInHistogramIntervalsException.
      *
      * @since 3.10
      */
@@ -17,7 +17,7 @@ public class IntersectValueInHistogramIntervalsException extends RuntimeExceptio
     }
 
     /**
-     * Constructs a DummyDataEntityNotFoundException.
+     * Constructs a IntersectValueInHistogramIntervalsException.
      *
      * @param message description of the exception
      */
@@ -26,7 +26,7 @@ public class IntersectValueInHistogramIntervalsException extends RuntimeExceptio
     }
 
     /**
-     * Constructs a DummyDataEntityNotFoundException.
+     * Constructs a IntersectValueInHistogramIntervalsException.
      *
      * @param cause cause of the exception
      */
@@ -35,7 +35,7 @@ public class IntersectValueInHistogramIntervalsException extends RuntimeExceptio
     }
 
     /**
-     * Constructs a DummyDataEntityNotFoundException.
+     * Constructs a IntersectValueInHistogramIntervalsException.
      *
      * @param message description of the exception
      * @param cause   cause of the exception
@@ -45,7 +45,7 @@ public class IntersectValueInHistogramIntervalsException extends RuntimeExceptio
     }
 
     /**
-     * Constructs a DummyDataEntityNotFoundException.
+     * Constructs a IntersectValueInHistogramIntervalsException.
      *
      * @param message description of the exception
      * @param code    code indicating a resource for more information regarding the lack of implementation
@@ -56,7 +56,7 @@ public class IntersectValueInHistogramIntervalsException extends RuntimeExceptio
     }
 
     /**
-     * Constructs a DummyDataEntityNotFoundException.
+     * Constructs a IntersectValueInHistogramIntervalsException.
      *
      * @param cause cause of the exception
      * @param code  code indicating a resource for more information regarding the lack of implementation
@@ -67,7 +67,7 @@ public class IntersectValueInHistogramIntervalsException extends RuntimeExceptio
     }
 
     /**
-     * Constructs a DummyDataEntityNotFoundException.
+     * Constructs a IntersectValueInHistogramIntervalsException.
      *
      * @param message description of the exception
      * @param cause   cause of the exception

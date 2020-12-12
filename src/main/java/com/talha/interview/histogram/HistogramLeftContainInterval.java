@@ -2,6 +2,8 @@ package com.talha.interview.histogram;
 
 /**
  * Created by tdilber at 12-Dec-20
+ * <p>
+ * Left Corner Contain but Right corner not contain HistogramInterval Object
  */
 public class HistogramLeftContainInterval<T extends Comparable> extends HistogramInterval<T> {
 

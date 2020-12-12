@@ -8,7 +8,7 @@ public class IllegalValueInIntervalException extends RuntimeException {
     private final String code;
 
     /**
-     * Constructs a DummyDataEntityNotFoundException.
+     * Constructs a IllegalValueInIntervalException.
      *
      * @since 3.10
      */
@@ -17,7 +17,7 @@ public class IllegalValueInIntervalException extends RuntimeException {
     }
 
     /**
-     * Constructs a DummyDataEntityNotFoundException.
+     * Constructs a IllegalValueInIntervalException.
      *
      * @param message description of the exception
      */
@@ -26,7 +26,7 @@ public class IllegalValueInIntervalException extends RuntimeException {
     }
 
     /**
-     * Constructs a DummyDataEntityNotFoundException.
+     * Constructs a IllegalValueInIntervalException.
      *
      * @param cause cause of the exception
      */
@@ -35,7 +35,7 @@ public class IllegalValueInIntervalException extends RuntimeException {
     }
 
     /**
-     * Constructs a DummyDataEntityNotFoundException.
+     * Constructs a IllegalValueInIntervalException.
      *
      * @param message description of the exception
      * @param cause   cause of the exception
@@ -45,7 +45,7 @@ public class IllegalValueInIntervalException extends RuntimeException {
     }
 
     /**
-     * Constructs a DummyDataEntityNotFoundException.
+     * Constructs a IllegalValueInIntervalException.
      *
      * @param message description of the exception
      * @param code    code indicating a resource for more information regarding the lack of implementation
@@ -56,7 +56,7 @@ public class IllegalValueInIntervalException extends RuntimeException {
     }
 
     /**
-     * Constructs a DummyDataEntityNotFoundException.
+     * Constructs a IllegalValueInIntervalException.
      *
      * @param cause cause of the exception
      * @param code  code indicating a resource for more information regarding the lack of implementation
@@ -67,7 +67,7 @@ public class IllegalValueInIntervalException extends RuntimeException {
     }
 
     /**
-     * Constructs a DummyDataEntityNotFoundException.
+     * Constructs a IllegalValueInIntervalException.
      *
      * @param message description of the exception
      * @param cause   cause of the exception
