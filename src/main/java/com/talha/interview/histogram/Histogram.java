@@ -1,5 +1,6 @@
 package com.talha.interview.histogram;
 
+import com.google.common.util.concurrent.Monitor;
 import com.talha.interview.histogram.exception.IntersectValueInHistogramIntervalsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,8 @@ public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
     private final Map<HistogramInterval<T>, List<T>> valueMap = new HashMap<>();
     private final List<T> outLinerValueList = new ArrayList<>();
     private final List<T> mappedValueList = new ArrayList<>();
+    // Single mutex used
+    private Monitor mutex = new Monitor();
 
     /**
      * Empty Constructor
@@ -96,16 +99,22 @@ public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
 
     /**
      * Add new interval in Histogram
+     *
      * @param newInterval interval to add
      */
     @Override
-    public synchronized void addInterval(HistogramInterval<T> newInterval) { //Synchronized for Thread Safety
-        log.trace("addInterval method called");
-        checkIntersect(newInterval);
-        histogramIntervalTreeMap.put(newInterval.getLeftValue(), newInterval);
-        log.info(newInterval.toString() + " New interval added");
-        valueMap.put(newInterval, new ArrayList<>());
-        checkOutLinerList(newInterval);
+    public void addInterval(HistogramInterval<T> newInterval) { //Synchronized with mutex for Thread Safety
+        mutex.enter();
+        try {
+            log.trace("addInterval method called");
+            checkIntersect(newInterval);
+            histogramIntervalTreeMap.put(newInterval.getLeftValue(), newInterval);
+            log.info(newInterval.toString() + " New interval added");
+            valueMap.put(newInterval, new ArrayList<>());
+            checkOutLinerList(newInterval);
+        } finally {
+            mutex.leave();
+        }
     }
 
     private void checkOutLinerList(HistogramInterval<T> newInterval) {
@@ -128,28 +137,33 @@ public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
      * @param value value to add
      */
     @Override
-    public synchronized void addValue(T value) { //Synchronized for Thread Safety
-        log.trace("addValue method called");
+    public void addValue(T value) { //Synchronized with mutex for Thread Safety
+        mutex.enter();
+        try {
+            log.trace("addValue method called");
 
-        T lower = histogramIntervalTreeMap.navigableKeySet().lower(value);
-        HistogramInterval<T> interval = null;
+            T lower = histogramIntervalTreeMap.navigableKeySet().lower(value);
+            HistogramInterval<T> interval = null;
 
-        if (lower != null) {
-            interval = histogramIntervalTreeMap.get(lower);
+            if (lower != null) {
+                interval = histogramIntervalTreeMap.get(lower);
 
-            // For an exceptional case
-            if (interval.getRightValue().equals(value) && !interval.isRightContain() && histogramIntervalTreeMap.navigableKeySet().ceiling(value) != null) {
-                interval = histogramIntervalTreeMap.get(histogramIntervalTreeMap.navigableKeySet().ceiling(value));
+                // For an exceptional case
+                if (interval.getRightValue().equals(value) && !interval.isRightContain() && histogramIntervalTreeMap.navigableKeySet().ceiling(value) != null) {
+                    interval = histogramIntervalTreeMap.get(histogramIntervalTreeMap.navigableKeySet().ceiling(value));
+                }
             }
-        }
 
-        if (interval != null && interval.isAvailableValue(value)) {
-            valueMap.get(interval).add(value);
-            mappedValueList.add(value);
-            log.info(value + " value added in " + interval.toString() + " interval");
-        } else {
-            log.info(value + " value added in out liners list");
-            outLinerValueList.add(value);
+            if (interval != null && interval.isAvailableValue(value)) {
+                valueMap.get(interval).add(value);
+                mappedValueList.add(value);
+                log.info(value + " value added in " + interval.toString() + " interval");
+            } else {
+                log.info(value + " value added in out liners list");
+                outLinerValueList.add(value);
+            }
+        } finally {
+            mutex.leave();
         }
     }
 
