@@ -2,11 +2,18 @@ package com.talha.interview.histogram.parser;
 
 import com.talha.interview.histogram.HistogramInterval;
 import com.talha.interview.histogram.exception.HistogramIntervalParserException;
+import org.apache.log4j.BasicConfigurator;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class DoubleHistogramIntervalParserTest {
+
+    @BeforeEach
+    void beforeEach() {
+        BasicConfigurator.configure();
+    }
 
     @Test
     void parse() {

@@ -132,8 +132,18 @@ public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
         log.trace("addValue method called");
 
         T lower = histogramIntervalTreeMap.navigableKeySet().lower(value);
-        HistogramInterval<T> interval = histogramIntervalTreeMap.get(lower);
-        if (interval.isAvailableValue(value)) {
+        HistogramInterval<T> interval = null;
+
+        if (lower != null) {
+            interval = histogramIntervalTreeMap.get(lower);
+
+            // For an exceptional case
+            if (interval.getRightValue().equals(value) && !interval.isRightContain() && histogramIntervalTreeMap.navigableKeySet().ceiling(value) != null) {
+                interval = histogramIntervalTreeMap.get(histogramIntervalTreeMap.navigableKeySet().ceiling(value));
+            }
+        }
+
+        if (interval != null && interval.isAvailableValue(value)) {
             valueMap.get(interval).add(value);
             mappedValueList.add(value);
             log.info(value + " value added in " + interval.toString() + " interval");
