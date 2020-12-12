@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * Histogram Class
  */
 public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
-    private final static Logger log = LoggerFactory.getLogger(Histogram.class);
+    private static final Logger log = LoggerFactory.getLogger(Histogram.class);
 
     /**
      * T => leftValue
