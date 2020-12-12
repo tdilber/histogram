@@ -103,6 +103,7 @@ public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
         log.trace("addInterval method called");
         checkIntersect(newInterval);
         histogramIntervalTreeMap.put(newInterval.getLeftValue(), newInterval);
+        log.info(newInterval.toString() + " New interval added");
         valueMap.put(newInterval, new ArrayList<>());
         checkOutLinerList(newInterval);
     }
@@ -165,7 +166,9 @@ public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
     public String toStringValueMap() {
         log.trace("toStringValueMap method called");
         StringBuilder stringBuilder = new StringBuilder();
-        for (Map.Entry<HistogramInterval<T>, List<T>> entry : valueMap.entrySet()) {
+        List<Map.Entry<HistogramInterval<T>, List<T>>> entries = new ArrayList<>(valueMap.entrySet());
+        entries.sort(Comparator.comparingInt(o -> o.getKey().getLeftValue().intValue()));
+        for (Map.Entry<HistogramInterval<T>, List<T>> entry : entries) {
             stringBuilder.append(entry.getKey().toString()).append(": ").append(entry.getValue().size()).append("\n");
         }
 
