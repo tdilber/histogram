@@ -13,10 +13,15 @@ import java.util.Scanner;
 
 /**
  * Created by tdilber at 12-Dec-20
+ * <p>
+ * Histogram Application Start Class
  */
 public class HistogramApp {
     private final static Logger log = LoggerFactory.getLogger(HistogramApp.class);
 
+    /**
+     * Main method for starting application
+     */
     public static void main(String[] args) throws Exception {
         BasicConfigurator.configure();
 
