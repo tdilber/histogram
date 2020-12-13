@@ -8,8 +8,6 @@ import com.talha.interview.histogram.exception.IllegalValueInIntervalException;
 import com.talha.interview.histogram.exception.IntersectValueInHistogramIntervalsException;
 import com.talha.interview.histogram.parser.DoubleHistogramIntervalParser;
 import org.apache.log4j.BasicConfigurator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Scanner;
 
@@ -19,7 +17,6 @@ import java.util.Scanner;
  * Histogram Application Start Class
  */
 public class HistogramApp {
-    private final static Logger log = LoggerFactory.getLogger(HistogramApp.class);
 
     /**
      * Main method for starting application
@@ -29,7 +26,6 @@ public class HistogramApp {
     public static void main(String[] args) throws Exception {
         BasicConfigurator.configure();
 
-        System.out.println("Created By Talha Dilber");
         Scanner scanner = new Scanner(System.in);
         int options = 0;
         while (options != 4) {
