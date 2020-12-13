@@ -1,6 +1,7 @@
 package com.talha.interview.histogram;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -24,23 +25,30 @@ public interface IHistogram<T extends Number & Comparable> extends IVariance<T> 
     void addValue(T value);
 
     /**
+     * Get Histogram Interval Values Map
+     *
+     * @return Histogram Interval Values Map
+     */
+    Map<HistogramInterval<T>, List<T>> getValueMap();
+
+    /**
      * Get Histogram Out Liner Values List
      *
      * @return Out Liner Values
      */
-    public List<T> getOutLinerValueList();
+    List<T> getOutLinerValueList();
 
     /**
      * Get Histogram Mapped Values List
      *
      * @return Mapped Values List
      */
-    public List<T> getMappedValueList();
+    List<T> getMappedValueList();
 
     /**
      * Get Histogram Interval Set
      *
      * @return Interval Set
      */
-    public Set<HistogramInterval<T>> getHistogramIntervalSet();
+    Set<HistogramInterval<T>> getHistogramIntervalSet();
 }
