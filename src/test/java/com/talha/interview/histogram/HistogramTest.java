@@ -15,10 +15,10 @@ import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class HistogramTest {
+public class HistogramTest {
 
     @BeforeEach
-    void beforeEach() {
+    public void testBeforeEach() {
         BasicConfigurator.configure();
     }
 
@@ -34,7 +34,7 @@ class HistogramTest {
     }
 
     @Test
-    void concurrencyTest() throws Exception {
+    public void testConcurrencyTest() throws Exception {
         final int CALCULATE_SIZE = 1000;
         int numberOfThreads = 10;
 
@@ -69,21 +69,21 @@ class HistogramTest {
     }
 
     @Test
-    void mean() {
+    public void testMean() {
         Histogram<Double> histogram = initHistogram();
 
         assertEquals(3d, histogram.mean());
     }
 
     @Test
-    void variance() {
+    public void testVariance() {
         Histogram<Double> histogram = initHistogram();
 
         assertEquals(2.5d, histogram.variance());
     }
 
     @Test
-    void addInterval() {
+    public void testAddInterval() {
         Histogram<Double> histogram = new Histogram<>();
         assertDoesNotThrow(() -> histogram.addInterval(HistogramInterval.of(true, true, 0d, 5d)));
         assertThrows(IntersectValueInHistogramIntervalsException.class, () -> histogram.addInterval(HistogramInterval.of(true, true, 2d, 4d)));
@@ -97,14 +97,14 @@ class HistogramTest {
     }
 
     @Test
-    void addInterval2() {
+    public void testAddInterval2() {
         Histogram<Double> histogram = new Histogram<>();
         assertDoesNotThrow(() -> histogram.addInterval(HistogramInterval.of(false, false, 3d, 5d)));
         assertThrows(IntersectValueInHistogramIntervalsException.class, () -> histogram.addInterval(HistogramInterval.of(false, false, 3d, 5d)));
     }
 
     @Test
-    void addValue() {
+    public void testAddValue() {
         Histogram<Double> histogram = initHistogram();
 
         assertDoesNotThrow(() -> histogram.addValue(1.5d)); // inner value
@@ -112,7 +112,7 @@ class HistogramTest {
     }
 
     @Test
-    void toStringValueMap() {
+    public void testToStringValueMap() {
         Histogram<Double> histogram = initHistogram();
         histogram.addInterval(HistogramLeftContainInterval.of(-5d, 0d));
         histogram.addInterval(HistogramInterval.of(false, false, 6d, 8d));
@@ -121,7 +121,7 @@ class HistogramTest {
     }
 
     @Test
-    void toStringOutLiners() {
+    public void testToStringOutLiners() {
         Histogram<Double> histogram = initHistogram();
         histogram.addValue(6d);
         histogram.addValue(7d);
@@ -130,7 +130,7 @@ class HistogramTest {
     }
 
     @Test
-    void getOutLinerValueList() {
+    public void testGetOutLinerValueList() {
         Histogram<Double> histogram = initHistogram();
         histogram.addValue(6d);
         histogram.addValue(7d);
@@ -143,7 +143,7 @@ class HistogramTest {
     }
 
     @Test
-    void getMappedValueList() {
+    public void testGetMappedValueList() {
         Histogram<Double> histogram = initHistogram();
 
         assertEquals(5, histogram.getMappedValueList().size());
@@ -157,7 +157,7 @@ class HistogramTest {
     }
 
     @Test
-    void getHistogramIntervalSet() {
+    public void testGetHistogramIntervalSet() {
         Histogram<Double> histogram = initHistogram();
 
         assertEquals(1, histogram.getHistogramIntervalSet().size());

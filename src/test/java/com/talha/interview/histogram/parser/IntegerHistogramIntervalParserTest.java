@@ -8,15 +8,15 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class IntegerHistogramIntervalParserTest {
+public class IntegerHistogramIntervalParserTest {
 
     @BeforeEach
-    void beforeEach() {
+    public void testBeforeEach() {
         BasicConfigurator.configure();
     }
 
     @Test
-    void parse() {
+    public void testParse() {
         IntegerHistogramIntervalParser integerHistogramInterval = new IntegerHistogramIntervalParser();
         assertThrows(HistogramIntervalParserException.class, () -> integerHistogramInterval.parse(null));
         assertThrows(HistogramIntervalParserException.class, () -> integerHistogramInterval.parse(""));

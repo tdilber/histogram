@@ -7,15 +7,15 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class FileDoubleHistogramCreatorTest {
+public class FileDoubleHistogramCreatorTest {
 
     @BeforeEach
-    void beforeEach() {
+    public void testBeforeEach() {
         BasicConfigurator.configure();
     }
 
     @Test
-    void create() throws Exception {
+    public void testCreate() throws Exception {
         FileDoubleHistogramCreator fileDoubleHistogramCreator = new FileDoubleHistogramCreator("histogram1.txt");
         Histogram<Double> histogram = fileDoubleHistogramCreator.create();
         assertEquals("(1.0 , 2.0): 0\n(2.0 , 4.0): 1\n[4.0 , 5.0): 1\n", histogram.toStringValueMap());

@@ -7,15 +7,15 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class HistogramIntervalTest {
+public class HistogramIntervalTest {
 
     @BeforeEach
-    void beforeEach() {
+    public void testBeforeEach() {
         BasicConfigurator.configure();
     }
 
     @Test
-    void constructor() {
+    public void testConstructor() {
         assertDoesNotThrow(() -> HistogramInterval.of(false, false, 2, 3));
         assertThrows(IllegalValueInIntervalException.class, () -> HistogramInterval.of(false, false, 3, 2));
         assertThrows(IllegalValueInIntervalException.class, () -> HistogramInterval.of(false, false, 2, 2));
@@ -25,7 +25,7 @@ class HistogramIntervalTest {
     }
 
     @Test
-    void isIntersect() {
+    public void testIsIntersect() {
         HistogramInterval<Integer> hi1 = HistogramInterval.of(false, false, 2, 3);
         HistogramInterval<Integer> hi2 = HistogramInterval.of(false, false, 4, 5);
         assertFalse(hi1.isIntersect(hi2));
@@ -69,7 +69,7 @@ class HistogramIntervalTest {
     }
 
     @Test
-    void isAvailableValue() {
+    public void testIsAvailableValue() {
         HistogramInterval<Integer> hi = HistogramInterval.of(true, false, 3, 8);
         // borders
         assertFalse(hi.isAvailableValue(8));
@@ -85,7 +85,7 @@ class HistogramIntervalTest {
     }
 
     @Test
-    void of() {
+    public void testOf() {
         HistogramInterval<Double> interval = HistogramInterval.of(true, false, 5d, 10d);
         assertTrue(interval.isLeftContain());
         assertFalse(interval.isRightContain());
@@ -94,37 +94,37 @@ class HistogramIntervalTest {
     }
 
     @Test
-    void isLeftContain() {
+    public void testIsLeftContain() {
         HistogramInterval<Double> interval = HistogramInterval.of(false, false, 5d, 10d);
         assertFalse(interval.isLeftContain());
     }
 
     @Test
-    void isRightContain() {
+    public void testIsRightContain() {
         HistogramInterval<Double> interval = HistogramInterval.of(true, true, 5d, 10d);
         assertTrue(interval.isRightContain());
     }
 
     @Test
-    void getLeftValue() {
+    public void testGetLeftValue() {
         HistogramInterval<Double> interval = HistogramInterval.of(true, false, 2.3d, 10d);
         assertEquals(2.3d, interval.getLeftValue());
     }
 
     @Test
-    void getRightValue() {
+    public void testGetRightValue() {
         HistogramInterval<Double> interval = HistogramInterval.of(true, false, 5d, 7.7d);
         assertEquals(7.7d, interval.getRightValue());
     }
 
     @Test
-    void testToString() {
+    public void testToString() {
         HistogramInterval<Double> interval = HistogramInterval.of(true, false, 5d, 10d);
         assertEquals("[5.0 , 10.0)", interval.toString());
     }
 
     @Test
-    void testEquals() {
+    public void testEquals() {
         HistogramInterval<Double> baseHI = HistogramInterval.of(true, false, 5d, 10d);
         HistogramInterval<Double> hi2 = HistogramInterval.of(true, false, 5d, 10d);
         assertEquals(hi2, baseHI);
