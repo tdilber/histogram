@@ -20,6 +20,7 @@ class DoubleHistogramIntervalParserTest {
         DoubleHistogramIntervalParser doubleHistogramIntervalParser = new DoubleHistogramIntervalParser();
         assertThrows(HistogramIntervalParserException.class, () -> doubleHistogramIntervalParser.parse(null));
         assertThrows(HistogramIntervalParserException.class, () -> doubleHistogramIntervalParser.parse(""));
+        assertThrows(HistogramIntervalParserException.class, () -> doubleHistogramIntervalParser.parse(")"));
         assertThrows(HistogramIntervalParserException.class, () -> doubleHistogramIntervalParser.parse("  "));
         assertThrows(HistogramIntervalParserException.class, () -> doubleHistogramIntervalParser.parse("asdasd"));
         assertThrows(HistogramIntervalParserException.class, () -> doubleHistogramIntervalParser.parse("(asdasd, asdasd)"));
@@ -34,6 +35,7 @@ class DoubleHistogramIntervalParserTest {
         assertDoesNotThrow(() -> doubleHistogramIntervalParser.parse("[1.23, 1.232)"));
         assertDoesNotThrow(() -> doubleHistogramIntervalParser.parse("[1.1, 1.2]"));
         assertDoesNotThrow(() -> doubleHistogramIntervalParser.parse("[1, 2]"));
+        assertDoesNotThrow(() -> doubleHistogramIntervalParser.parse("(     6    ,   9)"));
         HistogramInterval<Double> interval = doubleHistogramIntervalParser.parse("[1, 2]");
         assertTrue(interval.isLeftContain());
         assertTrue(interval.isRightContain());

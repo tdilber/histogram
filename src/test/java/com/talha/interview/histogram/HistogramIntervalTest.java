@@ -61,6 +61,11 @@ class HistogramIntervalTest {
         HistogramInterval<Integer> hi15 = HistogramInterval.of(true, true, 1, 2);
         assertTrue(hi14.isIntersect(hi15));
         assertTrue(hi15.isIntersect(hi14));
+
+        HistogramInterval<Integer> hi16 = HistogramInterval.of(false, false, 3, 5);
+        HistogramInterval<Integer> hi17 = HistogramInterval.of(false, false, 3, 5);
+        assertTrue(hi16.isIntersect(hi17));
+        assertTrue(hi17.isIntersect(hi16));
     }
 
     @Test

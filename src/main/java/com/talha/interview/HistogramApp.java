@@ -4,6 +4,8 @@ import com.talha.interview.histogram.Histogram;
 import com.talha.interview.histogram.HistogramLeftContainInterval;
 import com.talha.interview.histogram.creator.FileDoubleHistogramCreator;
 import com.talha.interview.histogram.exception.HistogramIntervalParserException;
+import com.talha.interview.histogram.exception.IllegalValueInIntervalException;
+import com.talha.interview.histogram.exception.IntersectValueInHistogramIntervalsException;
 import com.talha.interview.histogram.parser.DoubleHistogramIntervalParser;
 import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
@@ -113,6 +115,8 @@ public class HistogramApp {
                     valueEntered = true;
                 } catch (HistogramIntervalParserException e) {
                     System.out.println("Histogram Parse Error! Please enter like (1.1, 2.3) or [1.1, 2.3) or (1.1, 2.3] or [1.1, 2.3]");
+                } catch (IllegalValueInIntervalException | IntersectValueInHistogramIntervalsException e2) {
+                    System.out.println(e2.getMessage());
                 }
             }
 

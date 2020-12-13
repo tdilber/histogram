@@ -169,8 +169,10 @@ public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
 
     private void checkIntersect(HistogramInterval<T> histogramInterval) {
         T lower = histogramIntervalTreeMap.navigableKeySet().lower(histogramInterval.leftValue);
+        T ceiling = histogramIntervalTreeMap.navigableKeySet().ceiling(histogramInterval.leftValue);
         T higher = histogramIntervalTreeMap.navigableKeySet().higher(histogramInterval.leftValue);
         checkKeyForIntersect(histogramInterval, lower);
+        checkKeyForIntersect(histogramInterval, ceiling);
         checkKeyForIntersect(histogramInterval, higher);
     }
 

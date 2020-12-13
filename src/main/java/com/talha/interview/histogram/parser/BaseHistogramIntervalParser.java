@@ -11,7 +11,7 @@ import java.util.List;
 public abstract class BaseHistogramIntervalParser<T extends Comparable> implements IHistogramIntervalParser<T> {
 
     protected List<String> splitParseParts(CharSequence charSequence) {
-        if (charSequence == null || charSequence.length() == 0 || charSequence.toString().trim().isEmpty()) {
+        if (charSequence == null || charSequence.length() < 5 || charSequence.toString().trim().isEmpty()) {
             throw new HistogramIntervalParserException("Text is Empty!");
         }
         String text = charSequence.toString();
