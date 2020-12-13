@@ -65,7 +65,8 @@ public class HistogramApp {
         }
 
         System.out.println("\nThank you!");
-        System.out.println("\nPhone Number: 534 069 8484");
+        System.out.println("\nCreated by Talha Dilber");
+        System.out.println("Phone Number: 534 069 8484");
         System.out.println("Email: dilber.talha@gmail.com");
     }
 
