@@ -21,6 +21,8 @@ public class HistogramApp {
 
     /**
      * Main method for starting application
+     * @param args main method args
+     * @throws Exception for file read exception
      */
     public static void main(String[] args) throws Exception {
         BasicConfigurator.configure();

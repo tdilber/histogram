@@ -12,6 +12,8 @@ public class HistogramLeftContainInterval<T extends Comparable> extends Histogra
      *
      * @param leftValue  Smaller Value
      * @param rightValue Bigger Value
+     * @param <T> Histogram Interval Value Type
+     * @return Histogram Interval Instance
      */
     public static <T extends Comparable> HistogramLeftContainInterval<T> of(T leftValue, T rightValue) {
         return new HistogramLeftContainInterval<T>(leftValue, rightValue);

@@ -23,6 +23,8 @@ public class HistogramInterval<T extends Comparable> {
      * @param rightContain rightContain ? "]" : ")"
      * @param leftValue    Smaller Value
      * @param rightValue   Bigger Value
+     * @param <T> Histogram Interval Value Type
+     * @return Histogram Interval Instance
      */
     public static <T extends Comparable> HistogramInterval<T> of(boolean leftContain, boolean rightContain, T leftValue, T rightValue) {
         return new HistogramInterval<T>(leftContain, rightContain, leftValue, rightValue);
