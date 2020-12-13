@@ -97,6 +97,13 @@ class HistogramTest {
     }
 
     @Test
+    void addInterval2() {
+        Histogram<Double> histogram = new Histogram<>();
+        assertDoesNotThrow(() -> histogram.addInterval(HistogramInterval.of(false, false, 3d, 5d)));
+        assertThrows(IntersectValueInHistogramIntervalsException.class, () -> histogram.addInterval(HistogramInterval.of(false, false, 3d, 5d)));
+    }
+
+    @Test
     void addValue() {
         Histogram<Double> histogram = initHistogram();
 
