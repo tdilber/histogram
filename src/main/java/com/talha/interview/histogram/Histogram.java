@@ -246,4 +246,14 @@ public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
     public Set<HistogramInterval<T>> getHistogramIntervalSet() {
         return valueMap.keySet();
     }
+
+    /**
+     * Get Histogram Interval Values Map
+     *
+     * @return Histogram Interval Values Map
+     */
+    @Override
+    public Map<HistogramInterval<T>, List<T>> getValueMap() {
+        return valueMap;
+    }
 }

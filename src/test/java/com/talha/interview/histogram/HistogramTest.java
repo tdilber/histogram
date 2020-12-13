@@ -8,6 +8,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,6 +31,41 @@ class HistogramTest {
         histogram.addValue(4d);
         histogram.addValue(5d);
         return histogram;
+    }
+
+    @Test
+    void concurrencyTest() throws Exception {
+        final int CALCULATE_SIZE = 1000;
+        int numberOfThreads = 10;
+
+        ExecutorService serviceInterval = Executors.newFixedThreadPool(numberOfThreads);
+        ExecutorService serviceValue = Executors.newFixedThreadPool(numberOfThreads);
+        CountDownLatch latch = new CountDownLatch(2 * numberOfThreads);
+        final Histogram<Double> histogram = new Histogram<>();
+        final Random random = new Random();
+        for (int i = 0; i < numberOfThreads; i++) {
+            serviceInterval.execute(() -> {
+                double identity = Double.parseDouble(Thread.currentThread().getName().substring(Thread.currentThread().getName().length() - 1));
+                identity *= 5;
+                for (double j = 0; j < CALCULATE_SIZE; j++) {
+                    histogram.addInterval(HistogramLeftContainInterval.of(j * 50d + identity, j * 50d + identity + 5d));
+                }
+                latch.countDown();
+            });
+            serviceValue.execute(() -> {
+                for (double j = 0; j < CALCULATE_SIZE; j++) {
+                    histogram.addValue(Math.abs(random.nextDouble()) * 51000);
+                }
+                latch.countDown();
+            });
+        }
+        latch.await();
+        System.out.println(histogram.toStringValueMap());
+        System.out.println(histogram.toStringOutLiners());
+        System.out.println("Mapped Values Count=> " + histogram.getMappedValueList().size());
+        System.out.println("OutLiner Values Count=> " + histogram.getOutLinerValueList().size());
+        assertEquals(numberOfThreads * CALCULATE_SIZE, histogram.getHistogramIntervalSet().size());
+        assertEquals(numberOfThreads * CALCULATE_SIZE, histogram.getMappedValueList().size() + histogram.getOutLinerValueList().size());
     }
 
     @Test
