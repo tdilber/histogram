@@ -1,12 +1,12 @@
 package com.talha.interview.histogram;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import com.google.common.util.concurrent.Monitor;
 import com.talha.interview.histogram.exception.IntersectValueInHistogramIntervalsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by tdilber at 12-Dec-20
@@ -22,6 +22,7 @@ public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
      */
     private final TreeMap<T, HistogramInterval<T>> histogramIntervalTreeMap = new TreeMap<>();
     private final Map<HistogramInterval<T>, List<T>> valueMap = new HashMap<>();
+    private Double mean = 0d, variance = 0d;
     private final List<T> outLinerValueList = new ArrayList<>();
     private final List<T> mappedValueList = new ArrayList<>();
     // Single mutex used
@@ -61,12 +62,13 @@ public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
      */
     @Override
     public Double mean() {
-        log.trace("mean method called");
-        if (mappedValueList.isEmpty()) {
-            return 0d;
+        mutex.enter();
+        try {
+            log.trace("mean method called");
+            return mean;
+        } finally {
+            mutex.leave();
         }
-        Double result = getTotalValue();
-        return result / mappedValueList.size();
     }
 
     /**
@@ -75,26 +77,18 @@ public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
      */
     @Override
     public Double variance() {
-        log.trace("variance method called");
-        if (mappedValueList.isEmpty()) {
-            return 0d;
+        mutex.enter();
+        try {
+            log.trace("variance method called");
+            if (mappedValueList.size() >= 2) {
+                AtomicDouble atomicDouble = new AtomicDouble(0d);
+                mappedValueList.parallelStream().forEach(v -> atomicDouble.addAndGet(Math.pow((v.doubleValue() - mean), 2)));
+                variance = atomicDouble.get() / (mappedValueList.size() - 1);
+            }
+            return variance;
+        } finally {
+            mutex.leave();
         }
-
-        Double mean = mean();
-        double sumResult = 0d;
-
-        for (T value : mappedValueList) {
-            sumResult += Math.pow((value.doubleValue() - mean), 2);
-        }
-        sumResult /= mappedValueList.size() - 1;
-
-        return sumResult;
-    }
-
-    private Double getTotalValue() {
-        AtomicReference<Double> total = new AtomicReference<>(0d);
-        mappedValueList.parallelStream().forEach(value -> total.updateAndGet(v -> v + value.doubleValue()));
-        return total.get();
     }
 
     /**
@@ -120,13 +114,12 @@ public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
     private void checkOutLinerList(HistogramInterval<T> newInterval) {
         for (T value : outLinerValueList) {
             if (newInterval.isAvailableValue(value)) {
-                valueMap.get(newInterval).add(value);
+                addValueInInterval(newInterval, value);
             }
         }
 
         for (T savedOutLiner : valueMap.get(newInterval)) {
             outLinerValueList.remove(savedOutLiner);
-            mappedValueList.add(savedOutLiner);
             log.info(savedOutLiner + " value move to new added " + newInterval.toString() + " interval");
         }
     }
@@ -155,9 +148,7 @@ public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
             }
 
             if (interval != null && interval.isAvailableValue(value)) {
-                valueMap.get(interval).add(value);
-                mappedValueList.add(value);
-                log.info(value + " value added in " + interval.toString() + " interval");
+                addValueInInterval(interval, value);
             } else {
                 log.info(value + " value added in out liners list");
                 outLinerValueList.add(value);
@@ -165,6 +156,18 @@ public class Histogram<T extends Number & Comparable> implements IHistogram<T> {
         } finally {
             mutex.leave();
         }
+    }
+
+    private void addValueInInterval(HistogramInterval<T> interval, T value) {
+        valueMap.get(interval).add(value);
+        mappedValueList.add(value);
+        calculateMean(value);
+        log.info(value + " value added in " + interval.toString() + " interval");
+    }
+
+    private void calculateMean(T value) {
+        int size = mappedValueList.size();
+        mean = (mean * (size - 1) + value.doubleValue()) / size;
     }
 
     private void checkIntersect(HistogramInterval<T> histogramInterval) {
